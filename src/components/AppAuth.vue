@@ -168,6 +168,7 @@
 <script lang="ts">
 import useModalStore from '@/stores/modal'
 import { mapState, mapWritableState } from 'pinia'
+import type { RegisterFormType } from '@/types/formTypes'
 
 export default {
   name: 'AppAuth',
@@ -192,7 +193,9 @@ export default {
     })
   },
   methods: {
-    register(values) {}
+    register(values: RegisterFormType) {
+      console.log(values)
+    }
   }
 }
 </script>
