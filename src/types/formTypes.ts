@@ -7,3 +7,8 @@ export interface RegisterFormType {
   country: string
   tos: number
 }
+
+export interface LoginFormType {
+  name: string
+  email: string
+}
