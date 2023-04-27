@@ -6,25 +6,19 @@
       <div class="fixed inset-0 transition-opacity">
         <div class="absolute inset-0 bg-gray-800 opacity-75"></div>
       </div>
-
-      <!-- This element is to trick the browser into centering the modal contents. -->
       <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
       <div
         class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
       >
-        <!-- Add margin if you want to see some of the overlay behind the modal-->
         <div class="py-4 text-left px-6">
-          <!--Title-->
           <div class="flex justify-between items-center pb-4">
             <p class="text-2xl font-bold">Your Account</p>
-            <!-- Modal Close Button -->
             <div class="modal-close cursor-pointer z-50" @click="modalVisibility = false">
               <i class="fas fa-times"></i>
             </div>
           </div>
 
-          <!-- Tabs -->
           <ul class="flex flex-wrap mb-4">
             <li class="flex-auto text-center">
               <a
@@ -80,74 +74,91 @@
             </button>
           </form>
           <!-- Registration Form -->
-          <form v-show="tab === 'register'">
-            <!-- Name -->
+          <VeeForm
+            v-show="tab === 'register'"
+            :validation-schema="registerSchema"
+            @submit="register"
+          >
             <div class="mb-3">
               <label class="inline-block mb-2">Name</label>
-              <input
+              <VeeField
+                name="name"
                 type="text"
                 class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
                 placeholder="Enter Name"
               />
+              <ErrorMessage class="text-red-600" name="name" />
             </div>
-            <!-- Email -->
             <div class="mb-3">
               <label class="inline-block mb-2">Email</label>
-              <input
+              <VeeField
+                name="email"
                 type="email"
                 class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
                 placeholder="Enter Email"
               />
+              <ErrorMessage class="text-red-600" name="email" />
             </div>
-            <!-- Age -->
             <div class="mb-3">
               <label class="inline-block mb-2">Age</label>
-              <input
+              <VeeField
+                name="age"
                 type="number"
                 class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
               />
+              <ErrorMessage class="text-red-600" name="age" />
             </div>
-            <!-- Password -->
             <div class="mb-3">
               <label class="inline-block mb-2">Password</label>
-              <input
+              <VeeField
+                name="password"
                 type="password"
                 class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
                 placeholder="Password"
               />
+              <ErrorMessage class="text-red-600" name="password" />
             </div>
-            <!-- Confirm Password -->
             <div class="mb-3">
               <label class="inline-block mb-2">Confirm Password</label>
-              <input
+              <VeeField
+                name="confirm_password"
                 type="password"
                 class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
                 placeholder="Confirm Password"
               />
+              <ErrorMessage class="text-red-600" name="confirm_password" />
             </div>
-            <!-- Country -->
             <div class="mb-3">
               <label class="inline-block mb-2">Country</label>
-              <select
+              <VeeField
+                as="select"
+                name="country"
                 class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
               >
                 <option value="USA">USA</option>
                 <option value="Mexico">Mexico</option>
                 <option value="Germany">Germany</option>
-              </select>
+                <option value="Antarctica">Antarctica</option>
+              </VeeField>
+              <ErrorMessage class="text-red-600" name="country" />
             </div>
-            <!-- TOS -->
             <div class="mb-3 pl-6">
-              <input type="checkbox" class="w-4 h-4 float-left -ml-6 mt-1 rounded" />
+              <VeeField
+                name="tos"
+                value="1"
+                type="checkbox"
+                class="w-4 h-4 float-left -ml-6 mt-1 rounded"
+              />
               <label class="inline-block">Accept terms of service</label>
             </div>
+            <ErrorMessage class="text-red-600" name="tos" />
             <button
               type="submit"
               class="block w-full bg-purple-600 text-white py-1.5 px-3 rounded transition hover:bg-purple-700"
             >
               Submit
             </button>
-          </form>
+          </VeeForm>
         </div>
       </div>
     </div>
@@ -162,7 +173,16 @@ export default {
   name: 'AppAuth',
   data() {
     return {
-      tab: 'login'
+      tab: 'login',
+      registerSchema: {
+        name: 'required|min:3|max:100|alpha_spaces',
+        email: 'required|min:3|max:100|email',
+        age: 'required|min_value:18|max_value:100',
+        password: 'required|min:3|max:100',
+        confirm_password: 'confirmed:@password',
+        country: 'required|excluded:Antarctica',
+        tos: 'required'
+      }
     }
   },
   computed: {
@@ -170,6 +190,9 @@ export default {
     ...mapWritableState(useModalStore, {
       modalVisibility: 'isOpen'
     })
+  },
+  methods: {
+    register(values) {}
   }
 }
 </script>
