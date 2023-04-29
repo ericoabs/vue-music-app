@@ -47,24 +47,26 @@
           </ul>
 
           <!-- Login Form -->
-          <form v-show="tab === 'login'">
-            <!-- Email -->
+          <VeeForm v-show="tab === 'login'" :validation-schema="loginSchema" @submit="login">
             <div class="mb-3">
               <label class="inline-block mb-2">Email</label>
-              <input
+              <VeeField
+                name="email"
                 type="email"
                 class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
                 placeholder="Enter Email"
               />
+              <ErrorMessage class="text-red-600" name="email" />
             </div>
-            <!-- Password -->
             <div class="mb-3">
               <label class="inline-block mb-2">Password</label>
-              <input
+              <VeeField
+                name="password"
                 type="password"
                 class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
                 placeholder="Password"
               />
+              <ErrorMessage class="text-red-600" name="password" />
             </div>
             <button
               type="submit"
@@ -72,7 +74,7 @@
             >
               Submit
             </button>
-          </form>
+          </VeeForm>
           <!-- Registration Form -->
           <div
             v-if="reg_show_alert"
@@ -181,7 +183,7 @@
 <script lang="ts">
 import useModalStore from '@/stores/modal'
 import { mapState, mapWritableState } from 'pinia'
-import type { RegisterFormType } from '@/types/formTypes'
+import type { LoginFormType, RegisterFormType } from '@/types/formTypes'
 
 export default {
   name: 'AppAuth',
@@ -196,6 +198,10 @@ export default {
         confirm_password: 'password_mismatch:@password',
         country: 'required|country_excluded:Antarctica',
         tos: 'tos'
+      },
+      loginSchema: {
+        email: 'required|email',
+        password: 'required|min:4|max:100'
       },
       userData: {
         country: 'USA'
@@ -218,10 +224,11 @@ export default {
       this.reg_in_submission = true
       this.reg_alert_variant = 'bg-blue-500'
       this.reg_alert_msg = 'Please wait! Your account is being created.'
-
       this.reg_alert_variant = 'bg-green-500'
       this.reg_alert_msg = 'Success! Your account has been created.'
-
+      console.log(values)
+    },
+    login(values: LoginFormType) {
       console.log(values)
     }
   }
