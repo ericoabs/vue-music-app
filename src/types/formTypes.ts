@@ -1,14 +1,14 @@
 export interface RegisterFormType {
-  name: String
-  email: String
+  name: string
+  email: string
   age: Number
-  password: String
-  confirm_password: String
-  country: String
+  password: string
+  confirm_password: string
+  country: string
   tos: Number
 }
 
 export interface LoginFormType {
-  name: String
-  email: String
+  name: string
+  email: string
 }
