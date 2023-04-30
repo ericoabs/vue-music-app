@@ -48,7 +48,6 @@
 
           <LoginForm v-if="tab === 'login'" />
           <RegisterForm v-else />
-          <!-- Registration Form -->
         </div>
       </div>
     </div>
