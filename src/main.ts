@@ -1,18 +1,25 @@
 import { createApp } from 'vue'
+import type { App as AppType } from 'vue'
 import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
 import VeeValidadePlugin from './includes/validation'
-import './includes/firebase'
+import { auth } from './includes/firebase'
 
 import './assets/base.css'
 import './assets/main.css'
 
-const app = createApp(App)
+let app: null | AppType
 
-app.use(createPinia())
-app.use(router)
-app.use(VeeValidadePlugin)
+auth.onAuthStateChanged(() => {
+  if (!app) {
+    app = createApp(App)
 
-app.mount('#app')
+    app.use(createPinia())
+    app.use(router)
+    app.use(VeeValidadePlugin)
+
+    app.mount('#app')
+  }
+})
