@@ -9,6 +9,6 @@ export interface RegisterFormType {
 }
 
 export interface LoginFormType {
-  name: string
   email: string
+  password: string
 }
