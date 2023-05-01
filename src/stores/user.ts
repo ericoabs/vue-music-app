@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { auth, usersCollections } from '@/includes/firebase'
-import type { RegisterFormType } from '@/types/formTypes'
+import type { LoginFormType, RegisterFormType } from '@/types/formTypes'
 
 export default defineStore('user', {
   state: () => ({
@@ -23,6 +23,11 @@ export default defineStore('user', {
       await userCredentials.user?.updateProfile({
         displayName: values.name
       })
+
+      this.userLoggedIn = true
+    },
+    async authenticate(values: LoginFormType) {
+      await auth.signInWithEmailAndPassword(values.email, values.password)
 
       this.userLoggedIn = true
     }
