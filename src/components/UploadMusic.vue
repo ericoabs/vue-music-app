@@ -21,24 +21,18 @@
       </div>
       <hr class="my-6" />
       <!-- Progess Bars -->
-      <div class="mb-4">
+      <div class="mb-4" v-for="upload in uploads" :key="upload.name">
         <!-- File Name -->
-        <div class="font-bold text-sm">Just another song.mp3</div>
+        <div class="font-bold text-sm" :class="upload.text_class">
+          <i :class="upload.icon"></i>{{ upload.name }}
+        </div>
         <div class="flex h-4 overflow-hidden bg-gray-200 rounded">
           <!-- Inner Progress Bar -->
-          <div class="transition-all progress-bar bg-blue-400" style="width: 75%"></div>
-        </div>
-      </div>
-      <div class="mb-4">
-        <div class="font-bold text-sm">Just another song.mp3</div>
-        <div class="flex h-4 overflow-hidden bg-gray-200 rounded">
-          <div class="transition-all progress-bar bg-blue-400" style="width: 35%"></div>
-        </div>
-      </div>
-      <div class="mb-4">
-        <div class="font-bold text-sm">Just another song.mp3</div>
-        <div class="flex h-4 overflow-hidden bg-gray-200 rounded">
-          <div class="transition-all progress-bar bg-blue-400" style="width: 55%"></div>
+          <div
+            class="transition-all progress-bar bg-blue-400"
+            :class="upload.variant"
+            :style="{ width: upload.current_progress + '%' }"
+          ></div>
         </div>
       </div>
     </div>
@@ -46,20 +40,30 @@
 </template>
 
 <script lang="ts">
-import { storage } from '@/includes/firebase'
+import { storage, auth, songsCollections } from '@/includes/firebase'
+
+export interface Upload {
+  task: any // Could not find reference for the storageRef.().put() type declarations
+  current_progress: number
+  name: string
+  variant: string
+  icon: string
+  text_class: string
+}
 
 export default {
   name: 'UploadMusic',
   data() {
     return {
-      is_dragover: false
+      is_dragover: false,
+      uploads: [] as Upload[]
     }
   },
   methods: {
     upload($event: DragEvent) {
       this.is_dragover = false
 
-      const files = [...$event.dataTransfer?.files]
+      const files = [...$event.dataTransfer.files]
 
       files.forEach((file) => {
         if (file.type !== 'audio/mpeg') {
@@ -69,7 +73,50 @@ export default {
         const storageRef = storage.ref()
         const songsRef = storageRef.child(`songs/${file.name}`)
 
-        songsRef.put(file)
+        const task = songsRef.put(file)
+
+        console.log(task)
+
+        const uploadIndex =
+          this.uploads.push({
+            task,
+            current_progress: 0,
+            name: file.name,
+            variant: 'bg-blue-400',
+            icon: 'fas fa-spinner fa-spin',
+            text_class: ''
+          }) - 1
+
+        task.on(
+          'state_changed',
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            this.uploads[uploadIndex].current_progress = progress
+          },
+          () => {
+            this.uploads[uploadIndex].variant = 'bg-red-400'
+            this.uploads[uploadIndex].icon = 'fas fa-times'
+            this.uploads[uploadIndex].text_class = 'text-red-400'
+          },
+          async () => {
+            const song = {
+              uid: auth.currentUser?.uid,
+              display_name: auth.currentUser?.displayName,
+              orinal_name: task.snapshot.ref.name,
+              modified_name: task.snapshot.ref.name,
+              genre: '',
+              comment_count: 0,
+              url: null
+            }
+
+            song.url = await task.snapshot.ref.getDownloadURL()
+            await songsCollections.add(song)
+
+            this.uploads[uploadIndex].variant = 'bg-green-400'
+            this.uploads[uploadIndex].icon = 'fas fa-check'
+            this.uploads[uploadIndex].text_class = 'text-green-400'
+          }
+        )
       })
     }
   }
