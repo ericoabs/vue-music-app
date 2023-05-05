@@ -42,7 +42,7 @@
 <script lang="ts">
 import { storage, auth, songsCollections } from '@/includes/firebase'
 
-export interface Upload {
+interface Upload {
   task: any // Could not find reference for the storageRef.().put() type declarations
   current_progress: number
   name: string
