@@ -13,6 +13,13 @@
       </button>
     </div>
     <div v-show="showForm">
+      <div
+        v-if="show_alert"
+        class="text-white text-center font-bold p-4 mb-4"
+        :class="alert_variant"
+      >
+        {{ alert_message }}
+      </div>
       <VeeForm :validation-schema="songSchema" :initial-values="song" @submit="edit">
         <div class="mb-3">
           <label class="inline-block mb-2">Song Title</label>
@@ -34,8 +41,21 @@
           />
           <ErrorMessage class="text-red-600" name="genre" />
         </div>
-        <button type="submit" class="py-1.5 px-3 rounded text-white bg-green-600">Submit</button>
-        <button type="button" class="py-1.5 px-3 rounded text-white bg-gray-600">Go Back</button>
+        <button
+          type="submit"
+          class="py-1.5 px-3 rounded text-white bg-green-600"
+          :disabled="in_submission"
+        >
+          Submit
+        </button>
+        <button
+          type="button"
+          class="py-1.5 px-3 rounded text-white bg-gray-600"
+          :disabled="in_submission"
+          @click.prevent="showForm = false"
+        >
+          Go Back
+        </button>
       </VeeForm>
     </div>
   </div>
@@ -44,12 +64,21 @@
 <script lang="ts">
 import type { Song } from '@/types/songsTypes'
 import type { PropType } from 'vue'
+import { songsCollections } from '@/includes/firebase'
 
 export default {
   name: 'CompositionItem',
   props: {
     song: {
       type: Object as PropType<Song>,
+      required: true
+    },
+    updateSong: {
+      type: Function,
+      required: true
+    },
+    index: {
+      type: Number,
       required: true
     }
   },
@@ -59,12 +88,34 @@ export default {
       songSchema: {
         modified_name: 'required|min:3|max:100',
         genre: 'min:3|max:100|alpha_spaces'
-      }
+      },
+      in_submission: false,
+      show_alert: false,
+      alert_variant: 'bg-blue-500',
+      alert_message: 'Please wait! Updating song info!'
     }
   },
   methods: {
-    edit() {
-      console.log('Song Edited')
+    async edit(values: Song) {
+      this.show_alert = true
+      this.in_submission = true
+      this.alert_variant = 'bg-blue-500'
+      this.alert_message = 'Please wait! Updating song info!'
+
+      try {
+        await songsCollections.doc(this.song.docID).update(values)
+      } catch (error) {
+        this.in_submission = false
+        this.alert_message = 'Something went wrong! Try again later'
+        this.alert_variant = 'bg-red-500'
+        return
+      }
+
+      this.updateSong(this.index, values)
+
+      this.in_submission = false
+      this.alert_variant = 'bg-green-500'
+      this.alert_message = 'Success!'
     }
   }
 }
