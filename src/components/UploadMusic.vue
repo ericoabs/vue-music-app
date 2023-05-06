@@ -76,8 +76,6 @@ export default {
 
         const task = songsRef.put(file)
 
-        console.log(task)
-
         const uploadIndex =
           this.uploads.push({
             task,
