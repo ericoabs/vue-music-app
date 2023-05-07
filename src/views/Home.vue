@@ -43,7 +43,9 @@ export default {
   name: 'Home',
   data() {
     return {
-      songs: [] as Song[]
+      songs: [] as Song[],
+      maxPerPage: 25,
+      pendingRequest: false
     }
   },
   components: {
@@ -59,7 +61,26 @@ export default {
   },
   methods: {
     async getSongs() {
-      const snapshots = await songsCollections.get()
+      if (this.pendingRequest) {
+        return
+      }
+
+      this.pendingRequest = true
+
+      let snapshots
+
+      snapshots = await songsCollections.orderBy('modified_name').limit(this.maxPerPage).get()
+
+      if (this.songs.length) {
+        const lastDoc = await songsCollections.doc(this.songs[this.songs.length - 1].docID).get()
+        snapshots = await songsCollections
+          .orderBy('modified_name')
+          .startAfter(lastDoc)
+          .limit(this.maxPerPage)
+          .get()
+      } else {
+        snapshots = await songsCollections.orderBy('modified_name').limit(this.maxPerPage).get()
+      }
 
       snapshots.forEach((document) => {
         this.songs.push({
@@ -67,6 +88,8 @@ export default {
           ...document.data()
         })
       })
+
+      this.pendingRequest = false
     },
     handleScroll() {
       const { scrollTop, offsetHeight } = document.documentElement
@@ -75,7 +98,7 @@ export default {
       const bottomOfWindow = Math.round(scrollTop) + innerHeight === offsetHeight
 
       if (bottomOfWindow) {
-        console.log('Cheguei')
+        this.getSongs()
       }
     }
   }
