@@ -1,11 +1,9 @@
 <template>
-  <div
-    v-if="login_show_alert"
-    :class="login_alert_variant"
-    class="text-white text-center font-bold p-4 rounded mb-4"
-  >
-    {{ login_alert_msg }}
-  </div>
+  <AlertBox
+    :showAlert="login_show_alert"
+    :alertMessage="login_alert_msg"
+    :alertVariant="login_alert_variant"
+  />
   <VeeForm :validation-schema="loginSchema" @submit="login">
     <div class="mb-3">
       <label class="inline-block mb-2">Email</label>
@@ -41,6 +39,7 @@
 import type { LoginFormType } from '@/types/formTypes'
 import { mapActions } from 'pinia'
 import useUserStore from '@/stores/user'
+import AlertBox from '@/components/AlertBox.vue'
 
 export default {
   name: 'LoginForm',
@@ -55,6 +54,9 @@ export default {
       login_alert_variant: 'bg-blue-500',
       login_alert_msg: 'Please wait! We are logging you in.'
     }
+  },
+  components: {
+    AlertBox
   },
   methods: {
     ...mapActions(useUserStore, ['authenticate']),

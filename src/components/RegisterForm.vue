@@ -1,11 +1,16 @@
 <template>
-  <div
+  <!-- <div
     v-if="reg_show_alert"
     :class="reg_alert_variant"
     class="text-white text-center font-bold p-4 rounded mb-4"
   >
     {{ reg_alert_msg }}
-  </div>
+  </div> -->
+  <AlertBox
+    :showAlert="reg_show_alert"
+    :alertMessage="reg_alert_msg"
+    :alertVariant="reg_alert_variant"
+  />
   <VeeForm :validation-schema="registerSchema" @submit="register" :initial-values="userData">
     <div class="mb-3">
       <label class="inline-block mb-2">Name</label>
@@ -96,6 +101,7 @@
 
 <script lang="ts">
 import type { RegisterFormType } from '@/types/formTypes'
+import AlertBox from '@/components/AlertBox.vue'
 
 import { mapActions } from 'pinia'
 import useUserStore from '@/stores/user'
@@ -121,6 +127,9 @@ export default {
       reg_alert_variant: 'bg-blue-500',
       reg_alert_msg: 'Please wait! Your account is being created.'
     }
+  },
+  components: {
+    AlertBox
   },
   methods: {
     ...mapActions(useUserStore, { createUser: 'register' }),
