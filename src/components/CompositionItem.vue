@@ -16,13 +16,11 @@
       </button>
     </div>
     <div v-show="showForm">
-      <div
-        v-if="show_alert"
-        class="text-white text-center font-bold p-4 mb-4"
-        :class="alert_variant"
-      >
-        {{ alert_message }}
-      </div>
+      <AlertBox
+        :showAlert="show_alert"
+        :alertMessage="alert_message"
+        :alertVariant="alert_variant"
+      />
       <VeeForm :validation-schema="songSchema" :initial-values="song" @submit="edit">
         <div class="mb-3">
           <label class="inline-block mb-2">Song Title</label>
@@ -70,6 +68,7 @@
 import type { Song } from '@/types/songsTypes'
 import type { PropType } from 'vue'
 import { songsCollections, storage } from '@/includes/firebase'
+import AlertBox from '@/components/AlertBox.vue'
 
 export default {
   name: 'CompositionItem',
@@ -95,6 +94,9 @@ export default {
       required: true
     }
   },
+  components: {
+    AlertBox
+  },
   data() {
     return {
       showForm: false,
@@ -114,7 +116,6 @@ export default {
       this.in_submission = true
       this.alert_variant = 'bg-blue-500'
       this.alert_message = 'Please wait! Updating song info!'
-
       try {
         await songsCollections.doc(this.song.docID).update(values)
       } catch (error) {
@@ -123,10 +124,8 @@ export default {
         this.alert_variant = 'bg-red-500'
         return
       }
-
       this.updateSong(this.index, values)
       this.updateUnsavedFlag(false)
-
       this.in_submission = false
       this.alert_variant = 'bg-green-500'
       this.alert_message = 'Success!'
@@ -134,11 +133,8 @@ export default {
     async deleteSong() {
       const storageRef = storage.ref()
       const songRef = storageRef.child(`songs/${this.song.orinal_name}`)
-
       await songRef.delete()
-
       await songsCollections.doc(this.song.docID).delete()
-
       this.removeSong(this.index)
     }
   }
