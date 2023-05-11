@@ -1,11 +1,4 @@
 <template>
-  <!-- <div
-    v-if="reg_show_alert"
-    :class="reg_alert_variant"
-    class="text-white text-center font-bold p-4 rounded mb-4"
-  >
-    {{ reg_alert_msg }}
-  </div> -->
   <AlertBox
     :showAlert="reg_show_alert"
     :alertMessage="reg_alert_msg"
