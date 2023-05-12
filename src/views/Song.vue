@@ -28,7 +28,12 @@
         <i class="fa fa-comments float-right text-green-400 text-2xl"></i>
       </div>
       <div class="p-6">
-        <VeeForm :validation-schema="commentSchema" @submit="submitComment">
+        <AlertBox
+          :showAlert="show_alert"
+          :alertMessage="alert_message"
+          :alertVariant="alert_variant"
+        />
+        <VeeForm :validation-schema="commentSchema" @submit="addComment" v-if="userLoggedIn">
           <VeeField
             name="comment"
             as="textarea"
@@ -36,7 +41,11 @@
             placeholder="Your comment here..."
           ></VeeField>
           <ErrorMessage name="comment" class="text-red-600" />
-          <button type="submit" class="py-1.5 px-3 rounded text-white bg-green-600 block">
+          <button
+            type="submit"
+            class="py-1.5 px-3 rounded text-white bg-green-600 block"
+            :disabled="comment_in_submission"
+          >
             Submit
           </button>
         </VeeForm>
@@ -128,9 +137,12 @@
 </template>
 
 <script lang="ts">
-import { songsCollections } from '@/includes/firebase'
+import { songsCollections, auth, commentsCollections } from '@/includes/firebase'
+import { mapState } from 'pinia'
+import useUserStore from '@/stores/user'
 import type { Song } from '@/types/songsTypes'
 import { ErrorMessage } from 'vee-validate'
+import AlertBox from '@/components/AlertBox.vue'
 
 export default {
   name: 'Song',
@@ -148,11 +160,19 @@ export default {
       } as Song,
       commentSchema: {
         comment: 'required|min:4'
-      }
+      },
+      comment_in_submission: false,
+      show_alert: false,
+      alert_variant: 'bg-blue-500',
+      alert_message: 'Please wait! Your comment is being submitted.'
     }
   },
+  computed: {
+    ...mapState(useUserStore, ['userLoggedIn'])
+  },
   components: {
-    ErrorMessage
+    ErrorMessage,
+    AlertBox
   },
   async created() {
     const docSnapshot = await songsCollections.doc(this.$route.params.id).get()
@@ -163,8 +183,34 @@ export default {
     this.song = docSnapshot.data()
   },
   methods: {
-    submitComment() {}
-  },
-  components: { ErrorMessage }
+    async addComment(values, { resetForm }) {
+      this.comment_in_submission = true
+      this.show_alert = true
+      this.alert_variant = 'bg-blue-500'
+      this.alert_message = 'Please wait! Your comment is being submitted.'
+
+      const comment = {
+        content: values.comment,
+        datePosted: new Date().toString(),
+        songId: this.$route.params.id,
+        name: auth.currentUser?.displayName,
+        uid: auth.currentUser?.uid
+      }
+
+      try {
+        await commentsCollections.add(comment)
+      } catch (error) {
+        this.comment_in_submission = false
+        this.alert_variant = 'bg-red-500'
+        this.alert_message = 'Error.'
+      }
+
+      this.comment_in_submission = false
+      this.alert_variant = 'bg-green-500'
+      this.alert_message = 'Comment added!'
+
+      resetForm()
+    }
+  }
 }
 </script>
