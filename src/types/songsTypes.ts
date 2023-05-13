@@ -8,3 +8,12 @@ export interface Song {
   url: string
   docID: string
 }
+
+export interface Comment {
+  docID: string
+  content: string
+  datePosted: Date | string
+  songId: string
+  name: string
+  uid: string
+}
