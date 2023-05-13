@@ -134,6 +134,11 @@ export default {
       this.$router.push({ name: 'home' })
       return
     }
+
+    const { sort } = this.$route.query
+
+    this.sort = sort === 'asc' || sort === 'desc' ? sort : 'desc'
+
     this.song = docSnapshot.data()
     this.getComments()
   },
@@ -179,6 +184,19 @@ export default {
           ...doc.data()
         })
       ])
+    }
+  },
+  watch: {
+    sort(newValue) {
+      if (newValue === this.$route.query.sort) {
+        return
+      }
+
+      this.$router.push({
+        query: {
+          sort: newValue
+        }
+      })
     }
   }
 }
