@@ -20,7 +20,7 @@
   <section class="container mx-auto mt-6">
     <div class="bg-white rounded border border-gray-200 relative flex flex-col">
       <div class="px-6 pt-6 pb-5 font-bold border-b border-gray-200">
-        <span class="card-title">Comments (15)</span>
+        <span class="card-title">Comments {{ song.comment_count }}</span>
         <i class="fa fa-comments float-right text-green-400 text-2xl"></i>
       </div>
       <div class="p-6">
@@ -158,6 +158,11 @@ export default {
         this.alert_variant = 'bg-red-500'
         this.alert_message = 'Error.'
       }
+
+      this.song.comment_count += 1
+      await songsCollections.doc(this.$route.params.id).update({
+        comment_count: this.song.comment_count
+      })
 
       this.getComments()
 
