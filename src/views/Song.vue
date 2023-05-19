@@ -6,11 +6,11 @@
     ></div>
     <div class="container mx-auto flex items-center">
       <button
-        @click.prevent="newSong(song)"
+        @click.prevent=";`${seek != '00:00' ? toggleAudio() : newSong(song)} `"
         type="button"
         class="z-50 h-24 w-24 text-3xl bg-white text-black rounded-full focus:outline-none"
       >
-        <i class="fas fa-play"></i>
+        <i class="fas" :class="`${playing ? 'fa-pause' : 'fa-play'}`"></i>
       </button>
       <div class="z-50 text-left ml-8">
         <div class="text-3xl font-bold">{{ song.modified_name }}</div>
@@ -110,6 +110,7 @@ export default {
   },
   computed: {
     ...mapState(useUserStore, ['userLoggedIn']),
+    ...mapState(usePlayerStore, ['playing', 'seek']),
     sortedComments() {
       return this.comments?.slice().sort((a, b) => {
         if (this.sort === 'desc') {
@@ -139,7 +140,7 @@ export default {
     this.getComments()
   },
   methods: {
-    ...mapActions(usePlayerStore, ['newSong']),
+    ...mapActions(usePlayerStore, ['newSong', 'toggleAudio']),
     async addComment(values, { resetForm }) {
       this.comment_in_submission = true
       this.show_alert = true
