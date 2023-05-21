@@ -10,9 +10,6 @@
 
       <div class="flex flex-grow items-center">
         <ul class="flex flex-row mt-1">
-          <li>
-            <RouterLink class="px-2 text-white" :to="{ name: 'about' }">About</RouterLink>
-          </li>
           <li v-if="!userStore.userLoggedIn">
             <a class="px-2 text-white" href="#" @click.prevent="toggleAuthModal"
               >Login / Register</a
