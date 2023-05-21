@@ -1,20 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '@/views/Home.vue'
-import About from '@/views/About.vue'
-import Manage from '@/views/Manage.vue'
-import Song from '@/views/Song.vue'
 import useUserStore from '@/stores/user'
+
+const Home = () => import('@/views/Home.vue')
+const Manage = () => import('@/views/Manage.vue')
+const Song = () => import('@/views/Song.vue')
 
 const routes = [
   {
     name: 'home',
     path: '/',
     component: Home
-  },
-  {
-    name: 'about',
-    path: '/about',
-    component: About
   },
   {
     name: 'manage',
@@ -55,9 +50,11 @@ router.beforeEach((to, from, next) => {
 
   if (store.userLoggedIn) {
     next()
+    return
   }
 
   next({ name: 'home' })
+  return
 })
 
 export default router
