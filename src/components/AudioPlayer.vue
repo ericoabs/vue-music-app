@@ -5,7 +5,7 @@
       <span class="song-artist">{{ current_song.display_name }}</span>
     </div>
     <div class="flex flex-nowrap gap-4 items-center">
-      <button type="button" @click.prevent="toggleAudio">
+      <button id="player-play-btn" type="button" @click.prevent="toggleAudio">
         <i class="fa text-gray-500 text-xl" :class="`${playing ? 'fa-pause' : 'fa-play'}`"></i>
       </button>
       <div class="player-currenttime">{{ seek }}</div>

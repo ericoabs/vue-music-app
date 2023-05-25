@@ -7,6 +7,7 @@
       ></div>
       <div class="container mx-auto flex items-center">
         <button
+          id="play-btn"
           @click.prevent=";`${seek != '00:00' ? toggleAudio() : newSong(song)} `"
           type="button"
           class="z-50 h-24 w-24 text-3xl bg-white text-black rounded-full focus:outline-none"
