@@ -53,8 +53,10 @@ export default {
           tos: 'You must accept the Terms of Service.'
         }
 
+        //@ts-ignore
         const message = messages[ctx.rule?.name]
-          ? messages[ctx.rule?.name]
+          ? //@ts-ignore
+            messages[ctx.rule?.name]
           : `The Field ${ctx.field} is invalid`
 
         return message

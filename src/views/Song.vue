@@ -117,9 +117,10 @@ export default {
     sortedComments() {
       return this.comments?.slice().sort((a, b) => {
         if (this.sort === 'desc') {
+          //@ts-ignore
           return new Date(b.datePosted) - new Date(a.datePosted)
         }
-
+        //@ts-ignore
         return new Date(a.datePosted) - new Date(b.datePosted)
       })
     }
@@ -129,7 +130,7 @@ export default {
     AlertBox
   },
   async created() {
-    const docSnapshot = await songsCollections.doc(this.$route.params.id).get()
+    const docSnapshot = await songsCollections.doc(this.$route.params.id as string).get()
     if (!docSnapshot.exists) {
       this.$router.push({ name: 'home' })
       return
@@ -139,11 +140,12 @@ export default {
 
     this.sort = sort === 'asc' || sort === 'desc' ? sort : 'desc'
 
-    this.song = docSnapshot.data()
+    this.song = docSnapshot.data() as Song
     this.getComments()
   },
   methods: {
     ...mapActions(usePlayerStore, ['newSong', 'toggleAudio']),
+    //@ts-ignore
     async addComment(values, { resetForm }) {
       this.comment_in_submission = true
       this.show_alert = true
@@ -167,7 +169,7 @@ export default {
       }
 
       this.song.comment_count += 1
-      await songsCollections.doc(this.$route.params.id).update({
+      await songsCollections.doc(this.$route.params.id as string).update({
         comment_count: this.song.comment_count
       })
 
@@ -185,6 +187,7 @@ export default {
       this.comments = []
 
       snapshots.forEach((doc) => [
+        //@ts-ignore
         this.comments.push({
           docID: doc.id,
           ...doc.data()

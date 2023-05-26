@@ -17,7 +17,7 @@ describe('stores', () => {
     const store = useUserStore()
 
     expect(store.userLoggedIn).not.toBe(true)
-    await store.authenticate({})
+    await store.authenticate({ email: '', password: '' })
     expect(store.userLoggedIn).toBe(true)
   })
 })

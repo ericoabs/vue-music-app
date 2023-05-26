@@ -136,9 +136,10 @@ export default {
       try {
         await this.createUser(values)
       } catch (error) {
+        console.log(error)
         this.reg_in_submission = false
         this.reg_alert_variant = 'bg-red-500'
-        this.reg_alert_msg = error.message
+        this.reg_alert_msg = 'There was a problem handling your request, try again later.'
         return
       }
 

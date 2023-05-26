@@ -52,7 +52,7 @@ export default defineStore('player', {
         requestAnimationFrame(this.progress)
       }
     },
-    updateSeek(event: MouseEvent) {
+    updateSeek(event: any) {
       if (!this.sound.playing) {
         return
       }

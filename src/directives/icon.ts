@@ -1,5 +1,5 @@
 export default {
-  beforeMount(el: HTMLElement, binding) {
+  beforeMount(el: HTMLElement, binding: any) {
     let iconClass = `fa fa-${binding.value}  text-xl`
 
     if (binding.arg === 'full') {

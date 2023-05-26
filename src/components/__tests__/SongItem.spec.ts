@@ -8,6 +8,7 @@ describe('SongItem.vue', () => {
       display_name: 'test'
     }
 
+    //@ts-ignore
     const wrapper = shallowMount(SongItem, {
       propsData: {
         song
@@ -28,7 +29,7 @@ describe('SongItem.vue', () => {
     const song = {
       docID: 'abc'
     }
-
+    //@ts-ignore
     const wrapper = shallowMount(SongItem, {
       propsData: {
         song

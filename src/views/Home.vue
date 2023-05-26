@@ -91,6 +91,7 @@ export default {
       }
 
       snapshots.forEach((document) => {
+        //@ts-ignore
         this.songs.push({
           docID: document.id,
           ...document.data()

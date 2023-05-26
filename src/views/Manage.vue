@@ -46,6 +46,7 @@ export default {
     }
   },
   async created() {
+    //@ts-ignore
     const snapshot = await songsCollections.where('uid', '==', auth.currentUser.uid).get()
 
     snapshot.forEach(this.addSong)
@@ -58,7 +59,7 @@ export default {
     removeSong(index: number) {
       this.songs.splice(index, 1)
     },
-    addSong(document) {
+    addSong(document: any) {
       const song = {
         ...document.data(),
         docID: document.id

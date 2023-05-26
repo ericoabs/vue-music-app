@@ -62,7 +62,7 @@ export default {
     }
   },
   methods: {
-    upload($event: DragEvent) {
+    upload($event: any) {
       this.is_dragover = false
 
       const files = $event.dataTransfer ? [...$event.dataTransfer.files] : [...$event.target.files]

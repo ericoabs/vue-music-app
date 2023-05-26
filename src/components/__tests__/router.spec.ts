@@ -8,6 +8,7 @@ describe('Router', () => {
       docID: 'test'
     }
 
+    //@ts-ignore
     const wrapper = shallowMount(SongItem, {
       propsData: { song },
       global: {

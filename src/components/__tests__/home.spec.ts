@@ -7,6 +7,7 @@ describe('Home.vue', () => {
   it('should render a list of songs', () => {
     const songs = [{}, {}, {}]
 
+    //@ts-ignore
     const component = shallowMount(Home, {
       data() {
         return {
